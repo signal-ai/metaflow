@@ -83,6 +83,8 @@ class KubernetesJob(object):
             else None
         )
 
+        resources = self._kwargs.get("resources")
+
         self._job = client.V1Job(
             api_version="batch/v1",
             kind="Job",
@@ -178,7 +180,7 @@ class KubernetesJob(object):
                                         # Don't set GPU limits if gpu isn't specified.
                                         if self._kwargs["gpu"] is not None
                                     },
-                                ),
+                                ) if resources is None else client.V1ResourceRequirements(**resources),
                                 volume_mounts=(
                                     [
                                         client.V1VolumeMount(

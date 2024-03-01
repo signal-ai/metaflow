@@ -90,6 +90,9 @@ class KubernetesDecorator(StepDecorator):
         volumes to the path to which the volume is to be mounted, e.g., `{'pvc-name': '/path/to/mount/on'}`.
     shared_memory: int, optional
         Shared memory size (in MiB) required for this step
+    resources : Dict[str, str], optional, default None
+        A map (dictionary) of Kubernetes resources (requests and limits) to be applied to the pod for this step.
+        Overrides any values set by `cpu`, `memory`, `disk`, `gpu` and `gpu_vendor` parameters.
     """
 
     name = "kubernetes"
@@ -113,6 +116,7 @@ class KubernetesDecorator(StepDecorator):
         "tmpfs_path": "/metaflow_temp",
         "persistent_volume_claims": None,  # e.g., {"pvc-name": "/mnt/vol", "another-pvc": "/mnt/vol2"}
         "shared_memory": None,
+        "resources": None,  # e.g., {"requests": {"cpu": "100m", "memory": "100Mi"}, "limits": {"cpu": "200m", "memory": "200Mi"}}
     }
     package_url = None
     package_sha = None
@@ -357,7 +361,7 @@ class KubernetesDecorator(StepDecorator):
                         "=".join([key, str(val)]) if val else key
                         for key, val in v.items()
                     ]
-                elif k in ["tolerations", "persistent_volume_claims"]:
+                elif k in ["tolerations", "persistent_volume_claims", "resources"]:
                     cli_args.command_options[k] = json.dumps(v)
                 else:
                     cli_args.command_options[k] = v
