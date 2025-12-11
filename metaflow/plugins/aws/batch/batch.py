@@ -129,7 +129,7 @@ class Batch(object):
             bucket, s3_object = parse_s3_full_path(s3_path)
             download_script = "{python} -c '{script}'".format(
                 python=self.environment._python(),
-                script='import boto3, os; ep=os.getenv(\\"METAFLOW_S3_ENDPOINT_URL\\"); boto3.client(\\"s3\\", **({\\"endpoint_url\\":ep} if ep else {})).download_file(\\"%s\\", \\"%s\\", \\"/tmp/step_command.sh\\")'
+                script='import boto3, os; ep=os.getenv("METAFLOW_S3_ENDPOINT_URL"); boto3.client("s3", **({"endpoint_url":ep} if ep else {})).download_file("%s", "%s", "/tmp/step_command.sh")'
                 % (bucket, s3_object),
             )
             download_cmd = (
